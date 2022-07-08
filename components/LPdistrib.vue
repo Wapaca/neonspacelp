@@ -16,9 +16,9 @@
         <div class="cell">Wallet</div>
         <div class="cell">LP token amount</div>
         <div class="cell">Share</div>
-        <div class="cell">Expected NEON output</div>
+        <div class="cell">NEON reward</div>
       </li>
-      <li v-for="(holder, i) in displayedTopLP">
+      <li class="body" v-for="(holder, i) in displayedTopLP">
         <div class="cell excludeCell">
           <div class="excludeButton" v-if="isWalletExcluded(holder[0])" @click="remExcludeWallet(holder[0])"><span><fa-icon :icon="['fas','check']" /></span></div>
           <div class="excludeButton" v-else @click="addExcludeWallet(holder[0])"></div>
@@ -27,7 +27,13 @@
         <div class="cell">{{holder[0]}}</div>
         <div class="cell">{{holder[1]}}</div>
         <div class="cell">{{ precise(getWalletShare(holder[0]), 2) }}%</div>
-        <div class="cell">0</div>
+        <div class="cell">{{ precise(getWalletNeonOutput(holder[0]), 4) }}</div>
+      </li>
+      <li class="foot">
+        <div class="cell doublecell">Total</div>
+        <div class="cell">{{ totalLPamount }}</div>
+        <div class="cell">100%</div>
+        <div class="cell"><input @change="setTotalNeonReward($event)" :value="totalNeonReward" type="number" placeholder="0"/></div>
       </li>
     </ul>
     <div v-else>
@@ -56,11 +62,11 @@ export default {
     getExchangeClass(exchange) {
       return (exchange === this.exchange) ? 'active' : ''
     },
-    ...mapActions(['fetchTopLP', 'switchExcludeWallets', 'remExcludeWallet', 'addExcludeWallet'])
+    ...mapActions(['fetchTopLP', 'switchExcludeWallets', 'remExcludeWallet', 'addExcludeWallet', 'setTotalNeonReward'])
   },
   computed: {
-    ...mapState(['excludeWalletActive', 'exchange', 'isLPLoading', 'displayedTopLP']),
-    ...mapGetters(['isWalletExcluded', 'getWalletShare']),
+    ...mapState(['excludeWalletActive', 'exchange', 'isLPLoading', 'displayedTopLP', 'totalNeonReward', 'totalLPamount']),
+    ...mapGetters(['isWalletExcluded', 'getWalletShare', 'getWalletNeonOutput']),
   },
   components: {
     ClipLoader
@@ -157,6 +163,7 @@ ul {
 .neon-button {
   background: transparent;
   border: 3px solid #ff00ec;
+  animation: boxPinkPulsate 1.5s infinite alternate;
   border-radius: 20%;
   padding: 5px 10px;
   text-align: center;
@@ -169,7 +176,8 @@ ul {
 }
 .neon-button:hover,
 .neon-button.active {
-  animation: neonPinkPulsate 2.5s infinite alternate;
+  animation: neonPinkPulsate 2.5s infinite alternate,
+             boxPinkPulsate 1.5s infinite alternate;
 }
 .LPdistrib {
   position: relative;
@@ -214,7 +222,8 @@ ul {
   animation: neonPinkFlicker 1.5s infinite alternate;
 }
 
-.holders li.head .cell {
+.holders li.head .cell,
+.holders li.foot .cell {
   color: #fff;
   animation: neonPinkPulsate 2.5s infinite alternate; 
   font-size: 24px;
@@ -222,6 +231,9 @@ ul {
 .holders li {
   display: flex;
   justify-content: space-between;
+}
+.holders li.foot {
+  margin-top: 1em;
 }
 .holders .cell {
   text-align: center;
@@ -231,14 +243,38 @@ ul {
   justify-content: center;
   align-items: center;
 }
-.holders.exclude .cell {
+.holders .doublecell {
+  width: 40%;
+}
+.holders.exclude li.head .cell,
+.holders.exclude li.body .cell {
   width: 18%;
+}
+.holders.exclude .doublecell {
+  width: 60%;
 }
 .holders .excludeCell {
   display: none;
 }
 .holders.exclude .excludeCell {
   display: flex;
+}
+.holders .cell input[type=number] {
+  background: transparent;
+  border: 3px solid #ff00ec;
+  border-radius: 20%;
+  padding: 5px 10px;
+  text-align: center;
+  font-family: 'Vibur';
+  font-weight: bold;
+  font-size: 18px;
+  color: #fff;
+  transition: 0.2s;
+  animation: boxPinkPulsate 1.5s infinite alternate,
+             neonPinkPulsate 2.5s infinite alternate;
+}
+.holders .cell input[type=number]:focus{
+    outline: none;
 }
 .excludeButton {
   display: flex;

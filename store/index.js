@@ -8,6 +8,7 @@ export const state = () => ({
   displayedTopLP: [],
   excludedWallets: [],
   totalLPamount: 0,
+  totalNeonReward: 0,
 })
 
 export const mutations = {
@@ -16,6 +17,7 @@ export const mutations = {
   setTopLP: (state, topLP) => state.topLP = topLP,
   setDisplayedTopLP: (state, displayedTopLP) => state.displayedTopLP = displayedTopLP,
   setTotalLPamount: (state, totalLPamount) => state.totalLPamount = totalLPamount,
+  setTotalNeonReward: (state, totalNeonReward) => state.totalNeonReward = totalNeonReward,
   updateIsLPLoading: (state, isLPLoading) => state.isLPLoading = isLPLoading,
   addExcludedWallets: (state, excludedWallet) => state.excludedWallets.push(excludedWallet),
   remExcludedWallets: (state, excludedWallet) => state.excludedWallets = state.excludedWallets.filter(w => w !== excludedWallet),
@@ -53,6 +55,10 @@ export const actions = {
     const displayedTopLP = state.topLP.filter(h => state.excludedWallets.indexOf(h[0]) === -1)
     commit('setDisplayedTopLP', displayedTopLP)
   },
+  async setTotalNeonReward({commit}, event) {
+    const amount = 1* event.target.value
+    commit('setTotalNeonReward', amount)
+  },
   async fetchTopLP({commit, state, dispatch}) {
     commit('updateIsLPLoading', true)
     const ticker = (state.exchange === 'defibox') ? 'BOXX' : 'WAXNEON'
@@ -66,6 +72,9 @@ export const actions = {
 }
 
 export const getters = {
+  getWalletNeonOutput: (state, getters) => (wallet) => {
+    return getters.getWalletShare(wallet) * state.totalNeonReward / 100
+  },
   getWalletShare: (state, getters) => (wallet) => {
     if(getters.isWalletExcluded(wallet))
       return 0
