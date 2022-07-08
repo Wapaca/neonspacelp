@@ -7,7 +7,7 @@
       </ul>
     </div>
     <div class="excludewallet-container">
-      <button class="neon-button">Exclude wallets</button>
+      <button @click="switchExcludeWallets()" :class="'neon-button ' + getExcludeWalletsClass()">Exclude wallets</button>
     </div>
     <ul :class="'holders '+getHoldersClass()" v-if="!isLPLoading">
       <li class="head">
@@ -18,14 +18,15 @@
         <div class="cell">Share</div>
         <div class="cell">Expected NEON output</div>
       </li>
-      <li v-for="(holder, i) in topLP">
+      <li v-for="(holder, i) in displayedTopLP">
         <div class="cell excludeCell">
-          <div class="excludeButton" @click=""><span><fa-icon :icon="['fas','check']" /></span></div>
+          <div class="excludeButton" v-if="isWalletExcluded(holder[0])" @click="remExcludeWallet(holder[0])"><span><fa-icon :icon="['fas','check']" /></span></div>
+          <div class="excludeButton" v-else @click="addExcludeWallet(holder[0])"></div>
         </div>
         <div class="cell">#{{1+i}}</div>
         <div class="cell">{{holder[0]}}</div>
         <div class="cell">{{holder[1]}}</div>
-        <div class="cell">0%</div>
+        <div class="cell">{{ precise(getWalletShare(holder[0]), 2) }}%</div>
         <div class="cell">0</div>
       </li>
     </ul>
@@ -36,22 +37,30 @@
 </template>
 
 <script>
+import { precise } from '~/utils/utils.js'
 import { mapState, mapGetters, mapActions } from 'vuex'
 
 import ClipLoader from 'vue-spinner/src/ClipLoader.vue'
 
 export default {
   methods: {
+    precise(x, y) {
+      return precise(x, y)
+    },
     getHoldersClass() {
-      return (true) ? 'exclude' : ''
+      return (this.excludeWalletActive) ? 'exclude' : ''
+    },
+    getExcludeWalletsClass() {
+      return (this.excludeWalletActive) ? 'active' : ''
     },
     getExchangeClass(exchange) {
       return (exchange === this.exchange) ? 'active' : ''
     },
-    ...mapActions(['fetchTopLP'])
+    ...mapActions(['fetchTopLP', 'switchExcludeWallets', 'remExcludeWallet', 'addExcludeWallet'])
   },
   computed: {
-    ...mapState(['exchange', 'isLPLoading', 'topLP'])
+    ...mapState(['excludeWalletActive', 'exchange', 'isLPLoading', 'displayedTopLP']),
+    ...mapGetters(['isWalletExcluded', 'getWalletShare']),
   },
   components: {
     ClipLoader
@@ -226,7 +235,10 @@ ul {
   width: 18%;
 }
 .holders .excludeCell {
-  
+  display: none;
+}
+.holders.exclude .excludeCell {
+  display: flex;
 }
 .excludeButton {
   display: flex;
