@@ -74,11 +74,12 @@ export default {
       return (exchange === this.exchange) ? 'active' : ''
     },
     ...mapActions('chain', ['logout']),
-    ...mapActions(['sendRewards', 'fetchTopLP', 'switchExcludeWallets', 'remExcludeWallet', 'addExcludeWallet', 'setTotalNeonReward', 'setExcludedWallets'])
+    ...mapActions('LPdistrib', ['sendRewards', 'fetchTopLP', 'switchExcludeWallets', 'remExcludeWallet', 'addExcludeWallet', 'setTotalNeonReward', 'setExcludedWallets'])
   },
   computed: {
-    ...mapState(['user', 'excludeWalletActive', 'exchange', 'isLPLoading', 'displayedTopLP', 'totalNeonReward', 'totalLPamount']),
-    ...mapGetters(['isWalletExcluded', 'getWalletShare', 'getWalletNeonOutput']),
+    ...mapState(['user']),
+    ...mapState('LPdistrib', ['excludeWalletActive', 'exchange', 'isLPLoading', 'displayedTopLP', 'totalNeonReward', 'totalLPamount']),
+    ...mapGetters('LPdistrib', ['isWalletExcluded', 'getWalletShare', 'getWalletNeonOutput']),
   },
   components: {
     ClipLoader,
@@ -103,8 +104,8 @@ export default {
   },
   created() {
    this.unsubscribe = this.$store.subscribe((mutation, state) => {
-      if (['addExcludedWallets', 'remExcludedWallets'].indexOf(mutation.type) !== -1 ) {
-        localStorage.setItem("excludedWallets", JSON.stringify(state.excludedWallets) )
+      if (['LPdistrib/addExcludedWallets', 'LPdistrib/remExcludedWallets'].indexOf(mutation.type) !== -1 ) {
+        localStorage.setItem("excludedWallets", JSON.stringify(state.LPdistrib.excludedWallets) )
       }
    });
   }
