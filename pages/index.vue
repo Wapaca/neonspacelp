@@ -2,6 +2,7 @@
   <div>
     <LoginModal />
     <LPdistrib/>
+    <notifications position="bottom right" classes="neonnotifications"/>
   </div>
 </template>
 

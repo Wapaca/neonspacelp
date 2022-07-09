@@ -174,6 +174,31 @@ export default {
     box-shadow: 0 0 25px 0 #ff00ec;
   }
 }
+.vue-notification-template.neonnotifications {
+  color: #fff;
+  font-size: 20px;
+  background: #292929;
+  padding: 10px;
+}
+.vue-notification-template.neonnotifications .notification-title {
+  animation: neonPinkPulsate 2.5s infinite alternate;
+}
+.vue-notification-template.neonnotifications.success {
+  background: #66a663;
+}
+.vue-notification-template.neonnotifications.warning {
+  background: #ca8744;
+}
+.vue-notification-template.neonnotifications.error {
+  background: #ca4444;
+}
+.vue-notification-template.neonnotifications .notification-content {
+  line-break: anywhere;
+}
+.vue-notification-template.neonnotifications .notification-content a {
+  text-decoration: underline;
+  color: #fff;
+}
 html, body, #__nuxt {
   height: 100%;
   min-height:100%;
