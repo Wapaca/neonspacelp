@@ -5,6 +5,7 @@ export default {
     port: 3000,
     host: '0.0.0.0'
   },
+  NETWORK: 'wax',
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     title: 'NeonSpace LP',
@@ -30,6 +31,10 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    '~/plugins/global',
+    { src: '~/plugins/startapp', mode: 'client' },
+    { src: '~/plugins/notifications-ssr', ssr: true },
+    { src: '~/plugins/notifications-client', ssr: false },
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

@@ -1,6 +1,11 @@
 import {getTopHolders} from '~/utils/lightapihelper.js'
 
 export const state = () => ({
+  user: null,
+  network: {},
+  blockNum: null,
+  account: null,
+
   excludeWalletActive: false,
   exchange: 'defibox',
   isLPLoading: true,
@@ -12,6 +17,11 @@ export const state = () => ({
 })
 
 export const mutations = {
+  setUser: (state, user) => state.user = user,
+  setNetwork: (state, network) =>  state.network = network,
+  setAccount: (state, account) => state.account = account,
+  setBlockNum: (state, block) => state.blockNum = block,
+
   updateExcludeWalletActive: (state, excludeWalletActive) => state.excludeWalletActive = excludeWalletActive,
   setExchange: (state, exchange) => state.exchange = exchange,
   setTopLP: (state, topLP) => state.topLP = topLP,
@@ -24,6 +34,13 @@ export const mutations = {
 }
 
 export const actions = {
+  async loadAccountData({ state, commit, dispatch }) {
+    if (!state.user) return
+
+    const account = await this.$rpc.get_account(state.user.name)
+    commit('setAccount', account)
+    commit('setBlockNum', account.head_block_num)
+  },
   async updateTotalLPamount({commit, state}) {
     let lpAmount = 0
     for(let i = 0; i < state.topLP.length; ++i)
@@ -72,6 +89,9 @@ export const actions = {
 }
 
 export const getters = {
+  user: (state) => () => {
+    return state.user
+  },
   getWalletNeonOutput: (state, getters) => (wallet) => {
     return getters.getWalletShare(wallet) * state.totalNeonReward / 100
   },
