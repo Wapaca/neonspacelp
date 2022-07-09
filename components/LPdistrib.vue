@@ -1,6 +1,7 @@
 <template>
   <div class="LPdistrib">
-    <img src="/neonspace_logo.png" alt="NeonSpace Logo"/>
+    <LoginModal />
+    <img class="LPdistrib-logo" src="/neonspace_logo.png" alt="NeonSpace Logo"/>
     <div class="exchanges-container">
       <ul class="exchanges">
         <li :class="getExchangeClass('defibox')">Defibox</li>
@@ -39,6 +40,15 @@
     <div v-else>
       <ClipLoader color="#ff00ec"/>
     </div>
+    <div class="sendDistrib">
+      <div v-if="user !== null">
+        <div><button @click='sendRewards()' class="neon-button">Send all rewards</button></div>
+        <div><button @click='logout()' class="neon-button">Logout</button></div>
+      </div>
+      <div v-else>
+        <button @click='$store.dispatch("modal/login")' class="neon-button">Connect wallet</button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -46,6 +56,7 @@
 import { precise } from '~/utils/utils.js'
 import { mapState, mapGetters, mapActions } from 'vuex'
 
+import LoginModal from '~/components/modals/Login.vue'
 import ClipLoader from 'vue-spinner/src/ClipLoader.vue'
 
 export default {
@@ -62,14 +73,16 @@ export default {
     getExchangeClass(exchange) {
       return (exchange === this.exchange) ? 'active' : ''
     },
-    ...mapActions(['fetchTopLP', 'switchExcludeWallets', 'remExcludeWallet', 'addExcludeWallet', 'setTotalNeonReward', 'setExcludedWallets'])
+    ...mapActions('chain', ['logout']),
+    ...mapActions(['sendRewards', 'fetchTopLP', 'switchExcludeWallets', 'remExcludeWallet', 'addExcludeWallet', 'setTotalNeonReward', 'setExcludedWallets'])
   },
   computed: {
-    ...mapState(['excludeWalletActive', 'exchange', 'isLPLoading', 'displayedTopLP', 'totalNeonReward', 'totalLPamount']),
+    ...mapState(['user', 'excludeWalletActive', 'exchange', 'isLPLoading', 'displayedTopLP', 'totalNeonReward', 'totalLPamount']),
     ...mapGetters(['isWalletExcluded', 'getWalletShare', 'getWalletNeonOutput']),
   },
   components: {
-    ClipLoader
+    ClipLoader,
+    LoginModal
   },
   mounted() {
     if(!process.client) {
@@ -211,7 +224,7 @@ ul {
   margin-top: 70px;
   padding: 92px 10px 46px;
 }
-.LPdistrib img {
+.LPdistrib .LPdistrib-logo {
   position: absolute;
   top: -92px;
   left: 50%;
@@ -309,5 +322,11 @@ ul {
 }
 .excludeButton span {
   font-size: 16px;
+}
+.sendDistrib {
+  margin-top: 1em;
+}
+.sendDistrib button {
+  margin-bottom: 0.8em;
 }
 </style>

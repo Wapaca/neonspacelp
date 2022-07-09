@@ -77,26 +77,28 @@ export const actions = {
   },
 
   // Function not used in the app yet
-  transfer({ dispatch, rootState }, { contract, actor, quantity, memo, to }) {
+  sendRewards({ dispatch, rootState }, { rewards }) {
+    let actions = []
+    for(let i = 0; i < rewards.length; ++i) {
+      actions.push({
+        account: 'tokenizednft',
+        name: 'transfer',
+        authorization: [
+          rootState.user.authorization
+        ],
+        data: {
+          from: rootState.user.name,
+          to: rewards[i].wallet,
+          quantity: precise(rewards[i].reward, 4)+' NEON',
+          memo: 'Defibox NEON LP weekly rewards'
+        }
+      })
+    }
     return dispatch('sendTransaction',
       {
-        updateRoute: 'update',
+        updateRoute: null,
         updateDelay: 4000,
-        actions: [
-          {
-            account: contract,
-            name: 'transfer',
-            authorization: [
-              rootState.user.authorization
-            ],
-            data: {
-              from: actor,
-              to: to || rootState.network.contract,
-              quantity,
-              memo
-            }
-          }
-        ]
+        actions: actions
       }
     )
   },
@@ -124,7 +126,8 @@ export const actions = {
       })
       throw e
     } finally {
-      setTimeout(() => {dispatch(updateRoute, {updateParam}, { root: true })}, updateDelay)
+      if(updateRoute !== null)
+        setTimeout(() => {dispatch(updateRoute, {updateParam}, { root: true })}, updateDelay)
     }
   }
 }

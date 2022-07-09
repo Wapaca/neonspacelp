@@ -1,4 +1,5 @@
 import {getTopHolders} from '~/utils/lightapihelper.js'
+import {precise} from '~/utils/utils.js'
 
 export const state = () => ({
   user: null,
@@ -35,6 +36,20 @@ export const mutations = {
 }
 
 export const actions = {
+  async sendRewards({state, dispatch, getters}) {
+    if(state.totalNeonReward === 0)
+      return;
+
+    let rewards = [];
+
+    for(let i = 0; i < state.displayedTopLP.length; ++i) {
+      const output = 1*precise(getters.getWalletNeonOutput(state.displayedTopLP[i][0]), 4)
+      if(output >= 0.0001)
+        rewards.push({wallet: state.displayedTopLP[i][0], reward: output})
+    }
+
+    dispatch('chain/sendRewards', {rewards}, { root: true })
+  },
   async loadAccountData({ state, commit, dispatch }) {
     if (!state.user) return
 
