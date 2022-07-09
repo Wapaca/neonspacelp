@@ -50,13 +50,6 @@ export const actions = {
 
     dispatch('chain/sendRewards', {rewards}, { root: true })
   },
-  async loadAccountData({ state, commit, dispatch }) {
-    if (!state.user) return
-
-    const account = await this.$rpc.get_account(state.user.name)
-    commit('setAccount', account)
-    commit('setBlockNum', account.head_block_num)
-  },
   async updateTotalLPamount({commit, state}) {
     let lpAmount = 0
     for(let i = 0; i < state.topLP.length; ++i)

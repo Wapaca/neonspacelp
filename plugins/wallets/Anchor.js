@@ -44,7 +44,7 @@ export default class AnchoWallet extends WalletBase {
 
   async checkLogin() {
     if (!this.link) return null
-    const session = await this.link.restoreSession('Alcor Exchange')
+    const session = await this.link.restoreSession('NeonSpace LP')
 
     if (session) {
       this.session = session
@@ -61,7 +61,7 @@ export default class AnchoWallet extends WalletBase {
 
   async login() {
     if (!this.link) this.createLink()
-    const identity = await this.link.login('Alcor Exchange')
+    const identity = await this.link.login('NeonSpace LP')
     this.session = identity.session
 
     const { actor, permission } = this.session.auth

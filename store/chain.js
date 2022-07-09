@@ -49,7 +49,7 @@ export const actions = {
     if (loginned) {
       const { name, authorization } = loginned
       commit('setUser', { name, authorization }, { root: true })
-      dispatch('afterLoginHook')
+      //dispatch('afterLoginHook')
 
       return true
     }
@@ -57,6 +57,7 @@ export const actions = {
   },
 
   afterLoginHook({ dispatch, rootState }) {
+    return;
   },
 
   logout({ state, dispatch, commit, getters, rootState }) {
@@ -69,9 +70,8 @@ export const actions = {
     commit('setCurrentWallet', wallet_name)
     const { name, authorization } = await getters.wallet.login()
 
-
     commit('setUser', { name, authorization }, { root: true })
-    dispatch('afterLoginHook')
+    //dispatch('afterLoginHook')
 
     commit('setLastWallet', wallet_name)
   },
@@ -124,7 +124,7 @@ export const actions = {
         title: 'Transaction error',
         text: e
       })
-      throw e
+      //throw e
     } finally {
       if(updateRoute !== null)
         setTimeout(() => {dispatch(updateRoute, {updateParam}, { root: true })}, updateDelay)

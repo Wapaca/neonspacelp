@@ -20,8 +20,6 @@
     "vue-template-compiler": "^2.6.14",
     "webpack": "^4.46.0",
     "@eosdacio/ual-wax": "^1.5.1",
-    "@nuxtjs/axios": "^5.13.6",
-    "@nuxtjs/fontawesome": "^1.1.2",
     "@proton/web-sdk": "^4.1.11",
     "@scatterjs/core": "^2.7.54",
     "@scatterjs/eosjs2": "^1.5.36",
