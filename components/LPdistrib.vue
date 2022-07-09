@@ -1,6 +1,5 @@
 <template>
   <div class="LPdistrib">
-    <LoginModal />
     <img class="LPdistrib-logo" src="/neonspace_logo.png" alt="NeonSpace Logo"/>
     <div class="exchanges-container">
       <ul class="exchanges">
@@ -56,7 +55,6 @@
 import { precise } from '~/utils/utils.js'
 import { mapState, mapGetters, mapActions } from 'vuex'
 
-import LoginModal from '~/components/modals/Login.vue'
 import ClipLoader from 'vue-spinner/src/ClipLoader.vue'
 
 export default {
@@ -82,8 +80,7 @@ export default {
     ...mapGetters('LPdistrib', ['isWalletExcluded', 'getWalletShare', 'getWalletNeonOutput']),
   },
   components: {
-    ClipLoader,
-    LoginModal
+    ClipLoader
   },
   mounted() {
     if(!process.client) {

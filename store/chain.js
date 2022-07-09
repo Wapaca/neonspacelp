@@ -43,6 +43,7 @@ export const actions = {
   },
 
   async autoLogin({ state, dispatch, commit, getters }) {
+    return;
     console.log('try autoLogin..')
     const loginned = await getters.wallet.checkLogin()
     console.log(loginned)

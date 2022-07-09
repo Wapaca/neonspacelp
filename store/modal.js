@@ -10,8 +10,7 @@ export const mutations = {
 
 export const actions = {
   login({ commit, dispatch }) {
-    commit('setCurrent', 'login')
-    dispatch('setMobileMenuVisible', false, { root: true })    
+    commit('setCurrent', 'login') 
     commit('setVisible', true)
   },
   closeModal({ commit }) {
