@@ -62,7 +62,7 @@ export default {
     getExchangeClass(exchange) {
       return (exchange === this.exchange) ? 'active' : ''
     },
-    ...mapActions(['fetchTopLP', 'switchExcludeWallets', 'remExcludeWallet', 'addExcludeWallet', 'setTotalNeonReward'])
+    ...mapActions(['fetchTopLP', 'switchExcludeWallets', 'remExcludeWallet', 'addExcludeWallet', 'setTotalNeonReward', 'setExcludedWallets'])
   },
   computed: {
     ...mapState(['excludeWalletActive', 'exchange', 'isLPLoading', 'displayedTopLP', 'totalNeonReward', 'totalLPamount']),
@@ -72,7 +72,28 @@ export default {
     ClipLoader
   },
   mounted() {
-    this.fetchTopLP()
+    if(!process.client) {
+      console.log('!process.client')
+      return;
+    }
+
+    let savedData = localStorage.getItem("excludedWallets");
+    if(savedData) {
+      savedData = JSON.parse(savedData)
+      this.setExcludedWallets(savedData)
+      this.fetchTopLP()
+    }
+    else {
+      this.fetchTopLP()
+    }
+
+  },
+  created() {
+   this.unsubscribe = this.$store.subscribe((mutation, state) => {
+      if (['addExcludedWallets', 'remExcludedWallets'].indexOf(mutation.type) !== -1 ) {
+        localStorage.setItem("excludedWallets", JSON.stringify(state.excludedWallets) )
+      }
+   });
   }
 }
 </script>

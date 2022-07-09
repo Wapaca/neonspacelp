@@ -29,6 +29,7 @@ export const mutations = {
   setTotalLPamount: (state, totalLPamount) => state.totalLPamount = totalLPamount,
   setTotalNeonReward: (state, totalNeonReward) => state.totalNeonReward = totalNeonReward,
   updateIsLPLoading: (state, isLPLoading) => state.isLPLoading = isLPLoading,
+  setExcludedWallets: (state, excludedWallets) => state.excludedWallets = excludedWallets,
   addExcludedWallets: (state, excludedWallet) => state.excludedWallets.push(excludedWallet),
   remExcludedWallets: (state, excludedWallet) => state.excludedWallets = state.excludedWallets.filter(w => w !== excludedWallet),
 }
@@ -48,6 +49,9 @@ export const actions = {
         lpAmount += state.topLP[i][1]*1
 
     commit('setTotalLPamount', lpAmount)
+  },
+  async setExcludedWallets({commit}, excludedWallets) {
+    commit('setExcludedWallets', excludedWallets)
   },
   async switchExcludeWallets({commit, state, dispatch}) {
     // disable
