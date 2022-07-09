@@ -48,6 +48,9 @@
         <button @click='$store.dispatch("modal/login")' class="neon-button">Connect wallet</button>
       </div>
     </div>
+    <div class="credits">
+      <span>App made by <a href="https://twitter.com/wapaca" target="_blank">Wapaca</a></span>
+    </div>
   </div>
 </template>
 
@@ -220,7 +223,7 @@ ul {
   animation: boxPinkPulsate 1.5s infinite alternate;
   border-radius: 45px;
   margin-top: 70px;
-  padding: 92px 10px 46px;
+  padding: 92px 10px 23px;
 }
 .LPdistrib .LPdistrib-logo {
   position: absolute;
@@ -326,5 +329,17 @@ ul {
 }
 .sendDistrib button {
   margin-bottom: 0.8em;
+}
+.credits {
+  font-size: 20px;
+  margin-top: 1em;
+}
+.credits a {
+  color: #fff;
+  animation: neonPinkFlicker 1.5s infinite alternate;
+  text-decoration: none;
+}
+.credits a:hover {
+  animation: neonPinkPulsate 2.5s infinite alternate;
 }
 </style>
