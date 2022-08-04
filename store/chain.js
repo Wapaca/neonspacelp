@@ -25,6 +25,9 @@ export const getters = {
 }
 
 export const actions = {
+  setLastWallet({commit}, wallet_name) {
+    commit('setLastWallet', wallet_name)
+  },
   init({ state, commit, dispatch, rootState, rootGetters, getters }) {
     const { network } = rootState
 
@@ -43,14 +46,13 @@ export const actions = {
   },
 
   async autoLogin({ state, dispatch, commit, getters }) {
-    return;
     console.log('try autoLogin..')
     const loginned = await getters.wallet.checkLogin()
     console.log(loginned)
     if (loginned) {
       const { name, authorization } = loginned
       commit('setUser', { name, authorization }, { root: true })
-      //dispatch('afterLoginHook')
+      dispatch('afterLoginHook')
 
       return true
     }
@@ -72,7 +74,7 @@ export const actions = {
     const { name, authorization } = await getters.wallet.login()
 
     commit('setUser', { name, authorization }, { root: true })
-    //dispatch('afterLoginHook')
+    dispatch('afterLoginHook')
 
     commit('setLastWallet', wallet_name)
   },
