@@ -97,15 +97,19 @@ export const actions = {
         }
       })
     }
-    return dispatch('sendTransaction',
-      {
-        updateRoute: null,
-        updateDelay: 4000,
-        actions: actions
-      }
-    )
+    if(actions.length > 20)
+      return dispatch('MultiTx/initModal', actions, {root: true})
+    else
+      return dispatch('sendTransaction',
+        {
+          updateRoute: null,
+          updateDelay: 4000,
+          actions: actions
+        }
+      )
   },
-  async sendTransaction({ state, rootState, dispatch, getters, commit }, {actions, updateRoute, updateDelay, updateParam}) {
+  async sendTransaction({ state, rootState, dispatch, getters, commit }, {actions, updateRoute, updateFailedRoute, updateDelay, updateParam}) {
+    let failed = false
     try {
       const res = await getters.wallet.transact(actions)
       let tx_id = res.transaction_id
@@ -121,15 +125,19 @@ export const actions = {
       })
       return res
     } catch (e) {
+      failed = true
       this._vm.$notify({
         duration: this.$notificationDuration,
         type: 'error',
         title: 'Transaction error',
-        text: e
+        text: (e.message !== undefined) ? e.message : e
       })
-      //throw e
+      if(updateFailedRoute === undefined)
+        throw e
+      else
+        setTimeout(() => {dispatch(updateFailedRoute, {updateParam, e}, { root: true })}, updateDelay)
     } finally {
-      if(updateRoute !== null)
+      if((!failed && updateFailedRoute !== undefined) || updateFailedRoute === undefined)
         setTimeout(() => {dispatch(updateRoute, {updateParam}, { root: true })}, updateDelay)
     }
   }

@@ -13,6 +13,10 @@ export const actions = {
     commit('setCurrent', 'login') 
     commit('setVisible', true)
   },
+  open({commit, dispatch}, name) {
+    commit('setCurrent', name) 
+    commit('setVisible', true)
+  },
   closeModal({ commit }) {
     commit('setVisible', false)
   }
