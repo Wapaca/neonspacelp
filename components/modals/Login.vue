@@ -59,11 +59,11 @@ export default {
           'https://github.com/GetScatter/ScatterDesktop/releases/tag/11.0.1'
       },
       {
-        name: 'SimplEOS',
-        logo: require('@/static/logos/simpleos.svg')
-      },
-      { name: 'Lynx', logo: require('@/static/logos/lynx.svg') },
-      { name: 'Ledger', logo: require('@/static/logos/ledger.svg') }
+        id: 'scatter',
+        name: 'Wombat',
+        logo: require('@/static/logos/wombat.png'),
+        create: 'https://www.wombat.app/the-app'
+      }
     ]
 
     this.wallets = wallets
