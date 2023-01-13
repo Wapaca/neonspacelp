@@ -6,11 +6,11 @@
       <h2>Sign transactions</h2>
       <p>Please sign several transactions</p>
       <ul>
-      	<li @click="(results[i] !== 'sent') ? sendTx(i) : null" v-for="(acts, i) in actions">
+      	<li v-for="(acts, i) in actions">
       		<span>Transaction {{ i + 1 }}</span>
       		<div v-if="results[i] === 'loading'"><ClipLoader color="#ff00ec"/></div>
       		<div v-else-if="results[i] === 'sent'"><fa-icon :icon="['fas','check']" /></div>
-      		<button v-else class="neon-button">Sign</button>
+      		<button @click="sendTx(i)" v-else class="neon-button">Sign</button>
       	</li>
       </ul>
     </div>
