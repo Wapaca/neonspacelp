@@ -9,9 +9,9 @@ const networks = {
     protocol: 'https',
     client_nodes: {
       'https://wax.greymass.com': 'Greymass - Canada',
-      'https://wax.eu.eosamsterdam.net': 'EOSAmsterdam - Amsterdam',
-      'https://wax.eosn.io': 'EOS Nation - Canada',
-      'https://wax.pink.gg': 'Pink GG - Germany',
+      'https://wax.eosphere.io': 'OVH Hosting, Inc.',
+      'https://wax-public1.neftyblocks.com': 'Cloudflare, Inc.', 
+      'https://wax.api.eosnation.io': 'Hive Data Center Inc.; Hurricane Electric LLC'
     },
   },
 
