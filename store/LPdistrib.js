@@ -1,5 +1,4 @@
 import {getTopHolders} from '~/utils/lightapihelper.js'
-import {fetchTable} from '~/utils/rpchelper.js'
 import {precise} from '~/utils/utils.js'
 
 export const state = () => ({
@@ -77,11 +76,20 @@ export const actions = {
     // disable
     if(state.excludeWalletActive) {
       commit('updateExcludeWalletActive', false)
-      dispatch('updateDisplayedTopLP')
+      if(state.poolType === 'uniswap-v3')
+        dispatch('updateDisplayedPositions')
+      else
+        dispatch('updateDisplayedTopLP')
     }
     else {
       commit('updateExcludeWalletActive', true)
-      commit('setDisplayedTopLP', state.topLP)
+
+      if(state.poolType === 'uniswap-v3')
+        commit('setDisplayedPositions', state.positions.sort(
+          (a, b) => Number(b.liquidity) - Number(a.liquidity)
+        ));
+      else
+        commit('setDisplayedTopLP', state.topLP)
     }
   },
   async addExcludeWallet({commit, dispatch}, wallet) {
@@ -96,8 +104,13 @@ export const actions = {
     const displayedTopLP = state.topLP.filter(h => state.excludedWallets.indexOf(h[0]) === -1)
     commit('setDisplayedTopLP', displayedTopLP)
   },
-  async updateDisplatedPositions({ commit, state }) {
-    commit('setDisplayedPositions', state.positions)
+  async updateDisplayedPositions({ commit, state }) {
+    const displayedPositions = state.positions.filter(
+      p => state.excludedWallets.indexOf(p.owner) === -1
+    ).sort(
+      (a, b) => Number(b.liquidity) - Number(a.liquidity)
+    );
+    commit('setDisplayedPositions', displayedPositions )
   },
   async setTotalNeonReward({commit}, event) {
     const amount = 1* event.target.value
@@ -116,12 +129,12 @@ export const actions = {
       dispatch('fetchPositions')
     }
   },
-  async fetchPositions() {
+  async fetchPositions({ commit, dispatch }) {
     commit('updateIsLPLoading', true)
     const NEON_POOLID = 409;
-    const positions = await fetchTable(this.$rpc, 'swap.alcor', NEON_POOLID,'positions')
+    const positionsReq = await this.$axios.get('https://wax.alcor.exchange/api/v2/swap/pools/'+NEON_POOLID+'/positions')
 
-    commit('setPositions', positions)
+    commit('setPositions', positionsReq.data)
     dispatch('updateDisplayedPositions')
     dispatch('updateTotalLPamount')
     commit('updateIsLPLoading', false)

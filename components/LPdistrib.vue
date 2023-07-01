@@ -11,7 +11,8 @@
     <div class="excludewallet-container">
       <button @click="switchExcludeWallets()" :class="'neon-button ' + getExcludeWalletsClass()">Exclude wallets</button>
     </div>
-    <HoldersUniswapv2 v-if="!isLPLoading" />
+    <HoldersUniswapv2 v-if="!isLPLoading && poolType === 'uniswap-v2'" />
+    <HoldersUniswapv3 v-else-if="!isLPLoading && poolType === 'uniswap-v3'" />
     <div v-else>
       <ClipLoader color="#ff00ec"/>
     </div>
@@ -44,11 +45,11 @@ export default {
       return (exchange === this.exchange) ? 'active' : ''
     },
     ...mapActions('chain', ['logout']),
-    ...mapActions('LPdistrib', ['sendRewards', 'fetchTopLP', 'setExcludedWallets', 'changeExchange'])
+    ...mapActions('LPdistrib', ['switchExcludeWallets', 'sendRewards', 'fetchTopLP', 'setExcludedWallets', 'changeExchange'])
   },
   computed: {
     ...mapState(['user']),
-    ...mapState('LPdistrib', ['excludeWalletActive', 'exchange', 'isLPLoading']),
+    ...mapState('LPdistrib', ['excludeWalletActive', 'exchange', 'isLPLoading', 'poolType']),
   },
   components: {
     ClipLoader
@@ -263,6 +264,11 @@ ul {
   display: flex;
   justify-content: space-between;
 }
+.holders li.body.uniswapv3 {
+  margin-bottom: 0.4em;
+  padding-bottom: 0.4em;
+  border-bottom: 1px solid #00f3ff;
+}
 .holders li.foot {
   margin-top: 1em;
 }
@@ -273,6 +279,10 @@ ul {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.holders .cell.liquidity {
+  flex-direction: column;
+
 }
 .holders .doublecell {
   width: 40%;

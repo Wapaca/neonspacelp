@@ -34,7 +34,6 @@ export default {
 	methods: {
 		...mapActions('LPdistrib', [
 			'setTotalNeonReward',
-			'switchExcludeWallets',
 			'remExcludeWallet',
 			'addExcludeWallet'
 		])
