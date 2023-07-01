@@ -1,5 +1,6 @@
 import {getTopHolders} from '~/utils/lightapihelper.js'
-import {precise} from '~/utils/utils.js'
+import { precise, isTicksAtLimit } from '~/utils/utils.js'
+import { Token, tickToPrice } from '@alcorexchange/alcor-swap-sdk'
 
 export const state = () => ({
   excludeWalletActive: false,
@@ -131,14 +132,33 @@ export const actions = {
       dispatch('fetchPoolsAndPositions')
     }
   },
-  async fetchPoolsAndPositions({ commit, dispatch }) {
+  async fetchPoolsAndPositions({ commit, dispatch, state }) {
     commit('updateIsLPLoading', true)
     const NEON_POOLID = 409;
     const poolReq = await this.$axios.get('https://wax.alcor.exchange/api/v2/swap/pools/'+NEON_POOLID)
     commit('setPool', poolReq.data)
 
     const positionsReq = await this.$axios.get('https://wax.alcor.exchange/api/v2/swap/pools/'+NEON_POOLID+'/positions')
-    commit('setPositions', positionsReq.data)
+    const positions = positionsReq.data.map(p => {
+      const tokenA = new Token(
+        state.pool.tokenA.contract,
+        state.pool.tokenA.decimals,
+        state.pool.tokenA.symbol,
+        state.pool.tokenA.id
+      );
+      const tokenB = new Token(
+        state.pool.tokenB.contract,
+        state.pool.tokenB.decimals,
+        state.pool.tokenB.symbol,
+        state.pool.tokenB.id
+      );
+
+      p.priceLower = isTicksAtLimit(state.pool.fee, p.tickLower, p.tickUpper).UPPER ? '∞' : tickToPrice(tokenA, tokenB, p.tickLower);
+      p.priceUpper = isTicksAtLimit(state.pool.fee, p.tickLower, p.tickUpper).LOWER ? '0' : tickToPrice(tokenA, tokenB, p.tickUpper);
+
+      return p;
+    });
+    commit('setPositions', positions)
     dispatch('updateDisplayedPositions')
     dispatch('updateTotalLPamount')
     commit('updateIsLPLoading', false)

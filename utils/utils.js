@@ -1,3 +1,5 @@
+import { TickMath, nearestUsableTick, TICK_SPACINGS } from '@alcorexchange/alcor-swap-sdk'
+
 export const delay = (ms) => {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -25,4 +27,24 @@ export const shuffleArray = (array) => {
     array[randId] = tmp;
   }
   return array;
+}
+
+export const isTicksAtLimit = (
+  feeAmount,
+  tickLower,
+  tickUpper
+) => {
+  return {
+    LOWER:
+      feeAmount && tickLower
+        ? tickLower ===
+          nearestUsableTick(TickMath.MIN_TICK, TICK_SPACINGS[feeAmount])
+        : undefined,
+
+    UPPER:
+      feeAmount && tickUpper
+        ? tickUpper ===
+          nearestUsableTick(TickMath.MAX_TICK, TICK_SPACINGS[feeAmount])
+        : undefined
+  }
 }
