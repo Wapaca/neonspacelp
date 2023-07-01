@@ -78,11 +78,23 @@ export const actions = {
     const amount = 1* event.target.value
     commit('setTotalNeonReward', amount)
   },
+  async changeExchange({ commit, dispatch }, exchange) {
+    commit('setExchange', exchange)
+
+    if(['defibox', 'taco'].indexOf(exchange) !== -1)
+      dispatch('fetchTopLP')
+  },
   async fetchTopLP({commit, state, dispatch}) {
     commit('updateIsLPLoading', true)
-    const ticker = (state.exchange === 'defibox') ? 'BOXX' : 'WAXNEON'
-    const contract = (state.exchange === 'defibox') ? 'lptoken.box' : 'alcorammswap'
-    const topLP = await getTopHolders(this.$axios, ticker, contract)
+    const tickers = {
+      'defibox': 'BOXX',
+      'taco': 'NEOWAX',
+    }
+    const contracts = {
+      'defibox': 'lptoken.box',
+      'taco': 'swap.taco'
+    }
+    const topLP = await getTopHolders(this.$axios, tickers[state.exchange], contracts[state.exchange])
     commit('setTopLP', topLP)
     dispatch('updateDisplayedTopLP')
     dispatch('updateTotalLPamount')

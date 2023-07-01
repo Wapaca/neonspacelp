@@ -3,7 +3,9 @@
     <img class="LPdistrib-logo" src="/neonspace_logo.png" alt="NeonSpace Logo"/>
     <div class="exchanges-container">
       <ul class="exchanges">
-        <li :class="getExchangeClass('defibox')">Defibox</li>
+        <li @click="changeExchange('alcor')" :class="getExchangeClass('alcor')">Alcor</li>
+        <li @click="changeExchange('defibox')" :class="getExchangeClass('defibox')">Defibox</li>
+        <li @click="changeExchange('taco')" :class="getExchangeClass('taco')">Taco</li>
       </ul>
     </div>
     <div class="excludewallet-container">
@@ -75,7 +77,7 @@ export default {
       return (exchange === this.exchange) ? 'active' : ''
     },
     ...mapActions('chain', ['logout']),
-    ...mapActions('LPdistrib', ['sendRewards', 'fetchTopLP', 'switchExcludeWallets', 'remExcludeWallet', 'addExcludeWallet', 'setTotalNeonReward', 'setExcludedWallets'])
+    ...mapActions('LPdistrib', ['sendRewards', 'fetchTopLP', 'switchExcludeWallets', 'remExcludeWallet', 'addExcludeWallet', 'setTotalNeonReward', 'setExcludedWallets', 'changeExchange'])
   },
   computed: {
     ...mapState(['user']),
@@ -274,10 +276,13 @@ ul {
 }
 .exchanges li {
   display: inline-block;
+  cursor: pointer;
   font-weight: bold;
   font-size: 28px;
-  color: #c5c5c5;
   padding: 0 10px;
+  color: #c5c5c5;
+}
+.exchanges li.active {
   color: #fff;
   animation: neonPinkFlicker 1.5s infinite alternate;
 }
