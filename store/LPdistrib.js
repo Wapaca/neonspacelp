@@ -153,8 +153,9 @@ export const actions = {
         state.pool.tokenB.id
       );
 
-      p.priceLower = isTicksAtLimit(state.pool.fee, p.tickLower, p.tickUpper).UPPER ? '∞' : tickToPrice(tokenA, tokenB, p.tickLower);
-      p.priceUpper = isTicksAtLimit(state.pool.fee, p.tickLower, p.tickUpper).LOWER ? '0' : tickToPrice(tokenA, tokenB, p.tickUpper);
+      // Order of tokens into tickToPrice reverse + tickUpper and tickLower too so it fits to NEON/WAX price
+      p.priceLower = isTicksAtLimit(state.pool.fee, p.tickLower, p.tickUpper).LOWER ? '0' : tickToPrice(tokenB, tokenA, p.tickUpper).toSignificant(5);
+      p.priceUpper = isTicksAtLimit(state.pool.fee, p.tickLower, p.tickUpper).UPPER ? '∞' : tickToPrice(tokenB, tokenA, p.tickLower).toSignificant(5);
 
       return p;
     });
