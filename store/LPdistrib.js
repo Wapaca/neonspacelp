@@ -1,10 +1,16 @@
 import {getTopHolders} from '~/utils/lightapihelper.js'
+import {fetchTable} from '~/utils/rpchelper.js'
 import {precise} from '~/utils/utils.js'
 
 export const state = () => ({
   excludeWalletActive: false,
   exchange: 'defibox',
+  poolType: 'uniswap-v2',
   isLPLoading: true,
+  // Alcor v2
+  positions: [],
+  displayedPositions: [],
+  // Taco & Defibox
   topLP: [],
   displayedTopLP: [],
   excludedWallets: [],
@@ -15,6 +21,9 @@ export const state = () => ({
 export const mutations = {
   updateExcludeWalletActive: (state, excludeWalletActive) => state.excludeWalletActive = excludeWalletActive,
   setExchange: (state, exchange) => state.exchange = exchange,
+  setPoolType: (state, type) => state.poolType = type,
+  setPositions: (state, positions) => state.positions = positions,
+  setDisplayedPositions: (state, positions) => state.displayedPositions = positions,
   setTopLP: (state, topLP) => state.topLP = topLP,
   setDisplayedTopLP: (state, displayedTopLP) => state.displayedTopLP = displayedTopLP,
   setTotalLPamount: (state, totalLPamount) => state.totalLPamount = totalLPamount,
@@ -26,6 +35,13 @@ export const mutations = {
 }
 
 export const actions = {
+  resetList({ commit }) {
+    commit('setPositions', [])
+    commit('setDisplayedPositions', [])
+    commit('setTopLP', [])
+    commit('setDisplayedTopLP', [])
+    commit('setTotalLPamount', 0)
+  },
   async sendRewards({state, dispatch, getters}) {
     if(state.totalNeonReward === 0)
       return;
@@ -42,9 +58,15 @@ export const actions = {
   },
   async updateTotalLPamount({commit, state}) {
     let lpAmount = 0
-    for(let i = 0; i < state.topLP.length; ++i)
-      if(state.excludedWallets.indexOf(state.topLP[i][0]) === -1)
-        lpAmount += state.topLP[i][1]*1
+
+    if(state.poolType === 'uniswap-v3') {
+
+    }
+    else {
+      for(let i = 0; i < state.topLP.length; ++i)
+        if(state.excludedWallets.indexOf(state.topLP[i][0]) === -1)
+          lpAmount += state.topLP[i][1]*1
+    }
 
     commit('setTotalLPamount', lpAmount)
   },
@@ -74,15 +96,35 @@ export const actions = {
     const displayedTopLP = state.topLP.filter(h => state.excludedWallets.indexOf(h[0]) === -1)
     commit('setDisplayedTopLP', displayedTopLP)
   },
+  async updateDisplatedPositions({ commit, state }) {
+    commit('setDisplayedPositions', state.positions)
+  },
   async setTotalNeonReward({commit}, event) {
     const amount = 1* event.target.value
     commit('setTotalNeonReward', amount)
   },
   async changeExchange({ commit, dispatch }, exchange) {
+    dispatch('resetList')
     commit('setExchange', exchange)
 
-    if(['defibox', 'taco'].indexOf(exchange) !== -1)
+    if(['defibox', 'taco'].indexOf(exchange) !== -1) {
+      commit('setPoolType', 'uniswap-v2')
       dispatch('fetchTopLP')
+    }
+    else {
+      commit('setPoolType', 'uniswap-v3')
+      dispatch('fetchPositions')
+    }
+  },
+  async fetchPositions() {
+    commit('updateIsLPLoading', true)
+    const NEON_POOLID = 409;
+    const positions = await fetchTable(this.$rpc, 'swap.alcor', NEON_POOLID,'positions')
+
+    commit('setPositions', positions)
+    dispatch('updateDisplayedPositions')
+    dispatch('updateTotalLPamount')
+    commit('updateIsLPLoading', false)
   },
   async fetchTopLP({commit, state, dispatch}) {
     commit('updateIsLPLoading', true)

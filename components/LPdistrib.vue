@@ -11,33 +11,7 @@
     <div class="excludewallet-container">
       <button @click="switchExcludeWallets()" :class="'neon-button ' + getExcludeWalletsClass()">Exclude wallets</button>
     </div>
-    <ul :class="'holders '+getHoldersClass()" v-if="!isLPLoading">
-      <li class="head">
-        <div class="cell excludeCell">Exclude</div>
-        <div class="cell">Rank</div>
-        <div class="cell">Wallet</div>
-        <div class="cell">LP token amount</div>
-        <div class="cell">Share</div>
-        <div class="cell">NEON reward</div>
-      </li>
-      <li class="body" v-for="(holder, i) in displayedTopLP">
-        <div class="cell excludeCell">
-          <div class="excludeButton" v-if="isWalletExcluded(holder[0])" @click="remExcludeWallet(holder[0])"><span><fa-icon :icon="['fas','check']" /></span></div>
-          <div class="excludeButton" v-else @click="addExcludeWallet(holder[0])"></div>
-        </div>
-        <div class="cell">#{{1+i}}</div>
-        <div class="cell">{{holder[0]}}</div>
-        <div class="cell">{{holder[1]}}</div>
-        <div class="cell">{{ precise(getWalletShare(holder[0]), 2) }}%</div>
-        <div class="cell">{{ precise(getWalletNeonOutput(holder[0]), 4) }}</div>
-      </li>
-      <li class="foot">
-        <div class="cell doublecell">Total</div>
-        <div class="cell">{{ totalLPamount }}</div>
-        <div class="cell">100%</div>
-        <div class="cell"><input @change="setTotalNeonReward($event)" :value="totalNeonReward" type="number" placeholder="0"/></div>
-      </li>
-    </ul>
+    <HoldersUniswapv2 v-if="!isLPLoading" />
     <div v-else>
       <ClipLoader color="#ff00ec"/>
     </div>
@@ -57,19 +31,12 @@
 </template>
 
 <script>
-import { precise } from '~/utils/utils.js'
 import { mapState, mapGetters, mapActions } from 'vuex'
 
 import ClipLoader from 'vue-spinner/src/ClipLoader.vue'
 
 export default {
   methods: {
-    precise(x, y) {
-      return precise(x, y)
-    },
-    getHoldersClass() {
-      return (this.excludeWalletActive) ? 'exclude' : ''
-    },
     getExcludeWalletsClass() {
       return (this.excludeWalletActive) ? 'active' : ''
     },
@@ -77,12 +44,11 @@ export default {
       return (exchange === this.exchange) ? 'active' : ''
     },
     ...mapActions('chain', ['logout']),
-    ...mapActions('LPdistrib', ['sendRewards', 'fetchTopLP', 'switchExcludeWallets', 'remExcludeWallet', 'addExcludeWallet', 'setTotalNeonReward', 'setExcludedWallets', 'changeExchange'])
+    ...mapActions('LPdistrib', ['sendRewards', 'fetchTopLP', 'setExcludedWallets', 'changeExchange'])
   },
   computed: {
     ...mapState(['user']),
-    ...mapState('LPdistrib', ['excludeWalletActive', 'exchange', 'isLPLoading', 'displayedTopLP', 'totalNeonReward', 'totalLPamount']),
-    ...mapGetters('LPdistrib', ['isWalletExcluded', 'getWalletShare', 'getWalletNeonOutput']),
+    ...mapState('LPdistrib', ['excludeWalletActive', 'exchange', 'isLPLoading']),
   },
   components: {
     ClipLoader
