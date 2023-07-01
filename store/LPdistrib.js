@@ -58,11 +58,11 @@ export const actions = {
       }
     }
     else {
-      for(const pos of state.displayedPositions) {
-        const output = 1*precise(getters.getWalletNeonOutput(pos.owner), 4)
+      for(const owner of [...new Set(state.displayedPositions.map(p => p.owner))]) {
+        const output = 1*precise(getters.getWalletNeonOutput(owner), 4)
 
         if(output >= 0.0001)
-          rewards.push({wallet: pos.owner, reward: output})
+          rewards.push({wallet: owner, reward: output})
       }
     }
 
