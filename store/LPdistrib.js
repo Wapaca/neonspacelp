@@ -7,6 +7,7 @@ export const state = () => ({
   poolType: 'uniswap-v2',
   isLPLoading: true,
   // Alcor v2
+  pool: null,
   positions: [],
   displayedPositions: [],
   // Taco & Defibox
@@ -21,6 +22,7 @@ export const mutations = {
   updateExcludeWalletActive: (state, excludeWalletActive) => state.excludeWalletActive = excludeWalletActive,
   setExchange: (state, exchange) => state.exchange = exchange,
   setPoolType: (state, type) => state.poolType = type,
+  setPool: (state, pool) => state.pool = pool,
   setPositions: (state, positions) => state.positions = positions,
   setDisplayedPositions: (state, positions) => state.displayedPositions = positions,
   setTopLP: (state, topLP) => state.topLP = topLP,
@@ -126,14 +128,16 @@ export const actions = {
     }
     else {
       commit('setPoolType', 'uniswap-v3')
-      dispatch('fetchPositions')
+      dispatch('fetchPoolsAndPositions')
     }
   },
-  async fetchPositions({ commit, dispatch }) {
+  async fetchPoolsAndPositions({ commit, dispatch }) {
     commit('updateIsLPLoading', true)
     const NEON_POOLID = 409;
-    const positionsReq = await this.$axios.get('https://wax.alcor.exchange/api/v2/swap/pools/'+NEON_POOLID+'/positions')
+    const poolReq = await this.$axios.get('https://wax.alcor.exchange/api/v2/swap/pools/'+NEON_POOLID)
+    commit('setPool', poolReq.data)
 
+    const positionsReq = await this.$axios.get('https://wax.alcor.exchange/api/v2/swap/pools/'+NEON_POOLID+'/positions')
     commit('setPositions', positionsReq.data)
     dispatch('updateDisplayedPositions')
     dispatch('updateTotalLPamount')
@@ -170,5 +174,8 @@ export const getters = {
   },
   isWalletExcluded: (state) => (wallet) => {
     return state.excludedWallets.indexOf(wallet) !== -1
+  },
+  isPositionInRange: (state) => (position) => {
+    return position.tickLower <= state.pool.tick && state.pool.tick <= position.tickUpper
   }
 }

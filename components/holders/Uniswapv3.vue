@@ -16,7 +16,10 @@
     </div>
     <div class="cell">#{{1+i}}</div>
     <div class="cell">{{ position.owner }}</div>
-    <div class="cell">{{ null }}</div>
+    <div class="cell liquidity">
+    	<div>In range: <fa-icon v-if="isPositionInRange(position)" :icon="['fas','check']" /><fa-icon v-else :icon="['fas','xmark']" /></div>
+    	<div>Min: {{ null }} - Max: {{ null }}</div>
+    </div>
     <div class="cell liquidity">
     	<div>{{ position.liquidity }}</div>
     	<div>{{ position.amountA }}</div>
@@ -51,7 +54,12 @@ export default {
 			'totalNeonReward',
 			'totalLPamount'
 		]),
-		...mapGetters('LPdistrib', ['isWalletExcluded', 'getWalletShare', 'getWalletNeonOutput']),
+		...mapGetters('LPdistrib', [
+			'isPositionInRange',
+			'isWalletExcluded',
+			'getWalletShare',
+			'getWalletNeonOutput'
+		]),
 		...mapGetters('utils', ['precise'])
 	}
 }

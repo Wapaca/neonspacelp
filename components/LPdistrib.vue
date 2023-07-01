@@ -282,8 +282,9 @@ ul {
 }
 .holders .cell.liquidity {
   flex-direction: column;
-
 }
+.holders .cell.liquidity .fa-check { color: #09eb37; }
+.holders .cell.liquidity .fa-xmark { color: #eb0924; }
 .holders .doublecell {
   width: 40%;
 }
