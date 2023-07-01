@@ -66,7 +66,7 @@ export const actions = {
       }
     }
 
-    dispatch('chain/sendRewards', {rewards}, { root: true })
+    dispatch('chain/sendRewards', {exchange: state.exchange, rewards}, { root: true })
   },
   async updateTotalLPamount({commit, state, getters}) {
     let lpAmount = 0

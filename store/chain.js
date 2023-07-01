@@ -79,7 +79,7 @@ export const actions = {
   },
 
   // Function not used in the app yet
-  sendRewards({ dispatch, rootState }, { rewards }) {
+  sendRewards({ dispatch, rootState }, { exchange, rewards }) {
     let actions = []
     for(let i = 0; i < rewards.length; ++i) {
       actions.push({
@@ -92,7 +92,7 @@ export const actions = {
           from: rootState.user.name,
           to: rewards[i].wallet,
           quantity: precise(rewards[i].reward, 4)+' NEON',
-          memo: 'Defibox NEON LP weekly rewards'
+          memo: exchange.substr(0, 1).toUpperCase()+exchange.substr(1).toLowerCase()+' NEON LP weekly rewards'
         }
       })
     }
