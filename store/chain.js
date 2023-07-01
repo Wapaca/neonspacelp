@@ -1,6 +1,5 @@
 import WCW from '~/plugins/wallets/WCW'
 import AnchoWallet from '~/plugins/wallets/Anchor'
-import ScatterWallet from '~/plugins/wallets/Scatter'
 import {precise} from '~/utils/utils.js'
 
 export const state = () => ({
@@ -33,22 +32,22 @@ export const actions = {
 
     const wallets = {
       anchor: new AnchoWallet(network, this.$rpc),
-      scatter: new ScatterWallet(network, this.$rpc),
       wcw: new WCW(network, this.$rpc)
     }
 
     commit('setWallets', wallets)
 
     if (state.lastWallet) {
+      if(state.lastWallet === 'null')
+        commit('setLastWallet', 'anchor')
+
       commit('setCurrentWallet', state.lastWallet)
       dispatch('autoLogin')
     }
   },
 
   async autoLogin({ state, dispatch, commit, getters }) {
-    console.log('try autoLogin..')
     const loginned = await getters.wallet.checkLogin()
-    console.log(loginned)
     if (loginned) {
       const { name, authorization } = loginned
       commit('setUser', { name, authorization }, { root: true })

@@ -50,19 +50,6 @@ export default {
         name: 'Anchor',
         logo: require('@/static/logos/anchor.svg'),
         create: 'https://greymass.com/en/anchor/'
-      },
-      {
-        id: 'scatter',
-        name: 'Scatter / TP / Starteos',
-        logo: require('@/static/logos/scatter.svg'),
-        create:
-          'https://github.com/GetScatter/ScatterDesktop/releases/tag/11.0.1'
-      },
-      {
-        id: 'scatter',
-        name: 'Wombat',
-        logo: require('@/static/logos/wombat.png'),
-        create: 'https://www.wombat.app/the-app'
       }
     ]
 
