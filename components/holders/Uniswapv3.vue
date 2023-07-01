@@ -26,8 +26,8 @@
     	<div>{{ position.amountA }}</div>
     	<div>{{ position.amountB }}</div>
     </div>
-    <div class="cell">{{ 0 }}%</div>
-    <div class="cell">{{ 0 }}</div>
+    <div class="cell">{{ precise(getPositionShare(position), 2) }}%</div>
+    <div class="cell">{{ precise(getPositionOutput(position), 4) }}</div>
   </li>
   <li class="foot">
     <div class="cell doublecell">Total</div>
@@ -59,8 +59,8 @@ export default {
 		...mapGetters('LPdistrib', [
 			'isPositionInRange',
 			'isWalletExcluded',
-			'getWalletShare',
-			'getWalletNeonOutput'
+			'getPositionOutput',
+			'getPositionShare'
 		]),
 		...mapGetters('utils', ['precise'])
 	}

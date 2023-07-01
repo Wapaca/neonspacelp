@@ -50,19 +50,31 @@ export const actions = {
 
     let rewards = [];
 
-    for(let i = 0; i < state.displayedTopLP.length; ++i) {
-      const output = 1*precise(getters.getWalletNeonOutput(state.displayedTopLP[i][0]), 4)
-      if(output >= 0.0001)
-        rewards.push({wallet: state.displayedTopLP[i][0], reward: output})
+    if(state.poolType === 'uniswap-v2') {
+      for(let i = 0; i < state.displayedTopLP.length; ++i) {
+        const output = 1*precise(getters.getWalletNeonOutput(state.displayedTopLP[i][0]), 4)
+        if(output >= 0.0001)
+          rewards.push({wallet: state.displayedTopLP[i][0], reward: output})
+      }
+    }
+    else {
+      for(const pos of state.displayedPositions) {
+        const output = 1*precise(getters.getWalletNeonOutput(pos.owner), 4)
+
+        if(output >= 0.0001)
+          rewards.push({wallet: pos.owner, reward: output})
+      }
     }
 
     dispatch('chain/sendRewards', {rewards}, { root: true })
   },
-  async updateTotalLPamount({commit, state}) {
+  async updateTotalLPamount({commit, state, getters}) {
     let lpAmount = 0
 
     if(state.poolType === 'uniswap-v3') {
-
+      for(let i = 0; i < state.positions.length; ++i)
+        if(state.excludedWallets.indexOf(state.positions[i].owner) === -1 && getters.isPositionInRange(state.positions[i]))
+          lpAmount += state.positions[i].liquidity*1
     }
     else {
       for(let i = 0; i < state.topLP.length; ++i)
@@ -190,8 +202,28 @@ export const getters = {
     if(getters.isWalletExcluded(wallet))
       return 0
 
-    const walletLP = state.topLP.filter(h => h[0] === wallet)
-    return 100*walletLP[0][1] / state.totalLPamount
+    if(state.poolType === 'uniswap-v2') {
+      const walletLP = state.topLP.filter(h => h[0] === wallet)
+      return 100*walletLP[0][1] / state.totalLPamount
+    }
+    else {
+      const walletPoss = state.positions.filter(p => p.owner === wallet)
+      let totShare = 0
+
+      for(const pos of walletPoss)
+        totShare += getters.getPositionShare(pos)
+
+      return totShare
+    }
+  },
+  getPositionOutput: (state, getters) => (pos) => {
+    return getters.getPositionShare(pos) * state.totalNeonReward / 100
+  },
+  getPositionShare: (state, getters) => (pos) => {
+    if(getters.isWalletExcluded(pos.owner))
+      return 0
+
+    return getters.isPositionInRange(pos) ? 100*pos.liquidity / state.totalLPamount : 0;
   },
   isWalletExcluded: (state) => (wallet) => {
     return state.excludedWallets.indexOf(wallet) !== -1
